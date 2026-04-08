@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../DigitalCollectible.sol";
+import { DigitalCollectible } from "../DigitalCollectible.sol";
+import { ZeroGasOwnable } from "../libraries/ZeroGasOwnable.sol";
 
 contract DigitalCollectibleHelper is ZeroGasOwnable {
     constructor(string memory name, string memory symbol, uint8 decimals) { }

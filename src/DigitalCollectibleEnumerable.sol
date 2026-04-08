@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "./DigitalCollectible.sol";
-import "./interfaces/IDigitalCollectibleEnumerable.sol";
-import "./libraries/ZeroGasOwnable.sol";
+import { IERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
+import { DigitalCollectible } from "./DigitalCollectible.sol";
+import { IDigitalCollectibleEnumerable } from "./interfaces/IDigitalCollectibleEnumerable.sol";
+import { ZeroGasOwnable } from "./libraries/ZeroGasOwnable.sol";
 
 /**
  * @title DigitalCollectibleEnumerable

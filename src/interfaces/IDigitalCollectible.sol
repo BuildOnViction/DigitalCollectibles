@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
-import "./IERC4494.sol";
+import { IERC4494 } from "./IERC4494.sol";
 
 interface IDigitalCollectible is IERC721, IERC4494, IERC721Metadata {
     /// @notice Function to approve by way of owner signature, for all Collectibles os owner

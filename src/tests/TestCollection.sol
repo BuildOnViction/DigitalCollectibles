@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../DigitalCollectibleEnumerable.sol";
+import { DigitalCollectibleEnumerable } from "../DigitalCollectibleEnumerable.sol";
 
 contract TestCollection is DigitalCollectibleEnumerable {
     constructor(string memory name, string memory symbol, address issuer) {
