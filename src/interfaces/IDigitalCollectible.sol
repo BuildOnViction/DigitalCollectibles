@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 import "./IERC4494.sol";
 
-interface IDigitalCollectibles is IERC721, IERC4494, IERC721Metadata {
+interface IDigitalCollectible is IERC721, IERC4494, IERC721Metadata {
     /// @notice Function to approve by way of owner signature, for all Collectibles os owner
     /// @param owner the address initiated the approval
     /// @param spender the address to approve

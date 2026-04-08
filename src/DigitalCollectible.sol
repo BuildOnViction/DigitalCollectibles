@@ -8,10 +8,10 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import "./interfaces/IDigitalCollectibles.sol";
+import "./interfaces/IDigitalCollectible.sol";
 import "./libraries/ZeroGasOwnable.sol";
 
-abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollectibles {
+abstract contract DigitalCollectible is ZeroGasOwnable, ERC165, IDigitalCollectible {
     using Address for address;
     using Strings for uint256;
 
@@ -62,15 +62,18 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC165-supportsInterface}.
+     * @notice Returns true if this contract implements the interface defined by
+     * `interfaceId`. See the corresponding
+     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
+     * to learn more about how these ids are created.
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
         return interfaceId == type(IERC721).interfaceId || interfaceId == type(IERC721Metadata).interfaceId || interfaceId == type(IERC4494).interfaceId
-            || interfaceId == type(IDigitalCollectibles).interfaceId || super.supportsInterface(interfaceId);
+            || interfaceId == type(IDigitalCollectible).interfaceId || super.supportsInterface(interfaceId);
     }
 
     /**
-     * @dev See {IERC721-balanceOf}.
+     * @notice Returns the number of tokens in ``owner``'s account.
      */
     function balanceOf(address owner) public view virtual returns (uint256) {
         require(owner != address(0), "DC: address zero is not a valid owner");
@@ -78,7 +81,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721-ownerOf}.
+     * @notice Returns the owner of the `tokenId` token.
      */
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
         address owner = _ownerOf(tokenId);
@@ -87,21 +90,21 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721Metadata-name}.
+     * @notice Returns the token collection name.
      */
     function name() public view virtual override returns (string memory) {
         return _name;
     }
 
     /**
-     * @dev See {IERC721Metadata-symbol}.
+     * @notice Returns the token collection symbol.
      */
     function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
 
     /**
-     * @dev See {IERC721Metadata-tokenURI}.
+     * @notice Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
@@ -120,7 +123,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC4494-permit}.
+     * @notice Function to approve by way of owner signature.
      */
     function permit(address spender, uint256 tokenId, uint256 deadline, bytes memory signature) external override {
         require(deadline >= block.timestamp, "DC: Permit deadline expired");
@@ -137,7 +140,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev Permit for all
+     * @notice Tokens to approve by way of owner signature.
      */
     function permitForAll(address owner, address spender, uint256 deadline, bytes memory signature) external {
         require(deadline >= block.timestamp, "DC: Permit deadline expired");
@@ -152,10 +155,13 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721-approve}.
+     * @notice Gives permission to `to` to transfer `tokenId` token to another account.
+     * The approval is cleared when the token is transferred.
+     *
+     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.
      */
     function approve(address to, uint256 tokenId) public virtual override {
-        address owner = DigitalCollectibles.ownerOf(tokenId);
+        address owner = DigitalCollectible.ownerOf(tokenId);
         require(to != owner, "DC: approval to current owner");
 
         require(msg.sender == owner || isApprovedForAll(owner, msg.sender), "DC: approve caller is not token owner or approved for all");
@@ -164,7 +170,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721-getApproved}.
+     * @notice Returns the account approved for `tokenId` token.
      */
     function getApproved(uint256 tokenId) public view virtual override returns (address) {
         _requireMinted(tokenId);
@@ -173,21 +179,22 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721-setApprovalForAll}.
+     * @notice Approve or remove `operator` as an operator for the caller.
+     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.
      */
     function setApprovalForAll(address operator, bool approved) public virtual override {
         _setApprovalForAll(msg.sender, operator, approved);
     }
 
     /**
-     * @dev See {IERC721-isApprovedForAll}.
+     * @notice Returns if the `operator` is allowed to manage all of the assets of `owner`.
      */
     function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
     /**
-     * @dev See {IERC721-transferFrom}.
+     * @notice Transfers `tokenId` token from `from` to `to`.
      */
     function transferFrom(address from, address to, uint256 tokenId) public virtual override {
         //solhint-disable-next-line max-line-length
@@ -197,17 +204,17 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC721-safeTransferFrom}.
+     * @notice Safely transfers `tokenId` token from `from` to `to`.
      */
     function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
     /**
-     * @dev See {IERC721-safeTransferFrom}.
+     * @dev Safely transfers `tokenId` token from `from` to `to`.
      */
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public virtual override {
-        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: caller is not token owner or approved");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "DC: caller is not token owner or approved");
         _safeTransfer(from, to, tokenId, data);
     }
 
@@ -231,7 +238,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      */
     function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
         _transfer(from, to, tokenId);
-        require(_checkOnERC721Received(from, to, tokenId, data), "ERC721: transfer to non ERC721Receiver implementer");
+        require(_checkOnERC721Received(from, to, tokenId, data), "DC: transfer to non ERC721Receiver implementer");
     }
 
     /**
@@ -261,7 +268,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      * - `tokenId` must exist.
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
-        address owner = DigitalCollectibles.ownerOf(tokenId);
+        address owner = DigitalCollectible.ownerOf(tokenId);
         return (spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender);
     }
 
@@ -285,7 +292,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      */
     function _safeMint(address to, uint256 tokenId, bytes memory data) internal virtual {
         _mint(to, tokenId);
-        require(_checkOnERC721Received(address(0), to, tokenId, data), "ERC721: transfer to non ERC721Receiver implementer");
+        require(_checkOnERC721Received(address(0), to, tokenId, data), "DC: transfer to non ERC721Receiver implementer");
     }
 
     /**
@@ -301,13 +308,13 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      * Emits a {Transfer} event.
      */
     function _mint(address to, uint256 tokenId) internal virtual {
-        require(to != address(0), "ERC721: mint to the zero address");
-        require(!_exists(tokenId), "ERC721: token already minted");
+        require(to != address(0), "DC: mint to the zero address");
+        require(!_exists(tokenId), "DC: token already minted");
 
         _beforeTokenTransfer(address(0), to, tokenId, 1);
 
         // Check that tokenId was not minted by `_beforeTokenTransfer` hook
-        require(!_exists(tokenId), "ERC721: token already minted");
+        require(!_exists(tokenId), "DC: token already minted");
 
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.
@@ -336,12 +343,12 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = DigitalCollectibles.ownerOf(tokenId);
+        address owner = DigitalCollectible.ownerOf(tokenId);
 
         _beforeTokenTransfer(owner, address(0), tokenId, 1);
 
         // Update ownership in case tokenId was transferred by `_beforeTokenTransfer` hook
-        owner = DigitalCollectibles.ownerOf(tokenId);
+        owner = DigitalCollectible.ownerOf(tokenId);
 
         // Clear approvals
         delete _tokenApprovals[tokenId];
@@ -370,13 +377,13 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      * Emits a {Transfer} event.
      */
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        require(DigitalCollectibles.ownerOf(tokenId) == from, "DC: transfer from incorrect owner");
+        require(DigitalCollectible.ownerOf(tokenId) == from, "DC: transfer from incorrect owner");
         require(to != address(0), "DC: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId, 1);
 
         // Check that tokenId was not transferred by `_beforeTokenTransfer` hook
-        require(DigitalCollectibles.ownerOf(tokenId) == from, "DC: transfer from incorrect owner");
+        require(DigitalCollectible.ownerOf(tokenId) == from, "DC: transfer from incorrect owner");
 
         // Clear approvals from the previous owner
         delete _tokenApprovals[tokenId];
@@ -407,7 +414,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
      */
     function _approve(address to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
-        emit Approval(DigitalCollectibles.ownerOf(tokenId), to, tokenId);
+        emit Approval(DigitalCollectible.ownerOf(tokenId), to, tokenId);
     }
 
     /**
@@ -444,7 +451,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("ERC721: transfer to non ERC721Receiver implementer");
+                    revert("DC: transfer to non ERC721Receiver implementer");
                 } else {
                     /// @solidity memory-safe-assembly
                     assembly {
@@ -527,14 +534,14 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev See {IERC4494-DOMAIN_SEPARATOR}.
+     * @notice Returns the domain separator used in the encoding of the signature for permits, as defined by EIP-712
      */
     function DOMAIN_SEPARATOR() external view override returns (bytes32) {
         return _domainSeparatorV4();
     }
 
     /**
-     * @dev See {IERC4494-nonces}.
+     * @notice Returns the nonce of an Collectible - useful for creating permits
      */
     function nonces(uint256 tokenId) external view override returns (uint256) {
         require(_exists(tokenId), "DC: invalid token ID");
@@ -542,7 +549,7 @@ abstract contract DigitalCollectibles is ZeroGasOwnable, ERC165, IDigitalCollect
     }
 
     /**
-     * @dev Find nonce by address
+     * @notice Find nonce by address
      */
     function nonceByAddress(address owner) external view returns (uint256) {
         return _noncesByAddress[owner];
