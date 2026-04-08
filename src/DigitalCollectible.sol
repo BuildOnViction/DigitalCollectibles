@@ -11,6 +11,11 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./interfaces/IDigitalCollectible.sol";
 import "./libraries/ZeroGasOwnable.sol";
 
+/**
+ * @title DigitalCollectible
+ * @author Viction authors
+ * @notice A ready for use digital collectible collection on blockchain
+ */
 abstract contract DigitalCollectible is ZeroGasOwnable, ERC165, IDigitalCollectible {
     using Address for address;
     using Strings for uint256;
