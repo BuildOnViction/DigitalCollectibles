@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import { DigitalCollectibleEnumerable } from "../DigitalCollectibleEnumerable.sol";
 
-contract TestCollection is DigitalCollectibleEnumerable {
+contract DCCollection is DigitalCollectibleEnumerable {
     constructor(string memory name, string memory symbol, address issuer) {
         __DC_init(name, symbol, issuer);
     }
