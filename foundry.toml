@@ -14,4 +14,8 @@ quote_style = "double"
 tab_width = 4
 wrap_comments = false
 
+[rpc_endpoints]
+viction = "https://rpc.viction.xyz"
+victest = "https://rpc-testnet.viction.xyz"
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
