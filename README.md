@@ -21,3 +21,7 @@ Here are some of the key features of digital collectibles:
 - Install Foundry from here https://www.getfoundry.sh/.
 - Run the `DeployDCCollection.s.sol` script using Forge to deploy it into the blockchain. You will need to set `PRIVATE_KEY`, `COLLECTION_NAME`, `COLLECTION_SYMBOL` environment variables first.
 - Run the `ApplyZeroGas.s.sol` script using Forge to apply ZeroGas on Viction. This will need `PRIVATE_KEY`, `COLLECTION_ADDRESS` environment variables and you have at least 10 VIC.
+
+## License
+
+Digital Collectibles is licensed under the Apache-2.0 License. See the LICENSE file for more details.
