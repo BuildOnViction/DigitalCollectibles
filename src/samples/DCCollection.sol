@@ -8,6 +8,10 @@ contract DCCollection is DigitalCollectibleEnumerable {
         __DC_init(name, symbol, issuer);
     }
 
+    function creator() external view returns (address) {
+        return _owner;
+    }
+
     function mint(address owner, uint256 tokenId) external onlyOwner {
         _safeMint(owner, tokenId);
     }

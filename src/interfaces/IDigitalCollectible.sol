@@ -7,6 +7,9 @@ import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions
 import { IERC4494 } from "./IERC4494.sol";
 
 interface IDigitalCollectible is IERC721, IERC4494, IERC721Metadata {
+    /// @notice Return creator address of this collection
+    function creator() external view returns (address);
+
     /// @notice Function to approve by way of owner signature, for all Collectibles os owner
     /// @param owner the address initiated the approval
     /// @param spender the address to approve
